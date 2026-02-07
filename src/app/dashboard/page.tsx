@@ -24,13 +24,28 @@ const [temperature, setTemperature] = useState(22);
   <h3>Klima uređaj</h3>
 
 <p>Temperatura: {temperature}°C</p>
-<button onClick={() => setTemperature(temperature + 1)}>
-  Povećaj temperaturu 
+<p>Dozvoljeni opseg: 16°C – 30°C</p>
+
+<button
+  onClick={() => {
+    if (temperature < 30) {
+      setTemperature(temperature + 1);
+    }
+  }}
+>
+  Povećaj temperaturu
 </button>
 
-<button onClick={() => setTemperature(temperature - 1)}>
-Smanji temperaturu
+<button
+  onClick={() => {
+    if (temperature > 16) {
+      setTemperature(temperature - 1);
+    }
+  }}
+>
+  Smanji temperaturu
 </button>
+
 </main>
   );
 }

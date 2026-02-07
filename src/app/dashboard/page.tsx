@@ -3,6 +3,7 @@ import { useState } from "react";
 export default function DashboardPage() {
 const [lightOn, setLightOn] = useState(false);
 const [temperature, setTemperature] = useState(22);
+const [doorLocked, setDoorLocked] = useState(true);
 
 
   return (
@@ -44,6 +45,16 @@ const [temperature, setTemperature] = useState(22);
   }}
 >
   Smanji temperaturu
+</button>
+
+<h3>Pametna brava</h3>
+
+<p>
+  Status: {doorLocked ? "Zaključano" : "Otključano"}
+</p>
+
+<button onClick={() => setDoorLocked(!doorLocked)}>
+  {doorLocked ? "Otključaj" : "Zaključaj"}
 </button>
 
 </main>

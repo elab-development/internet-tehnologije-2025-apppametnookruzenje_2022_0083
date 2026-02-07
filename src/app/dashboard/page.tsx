@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import DeviceCard from "@/components/DeviceCard";
+import Button from "../../components/Button";
 
 
 export default function DashboardPage() {
@@ -18,9 +19,9 @@ const [doorLocked, setDoorLocked] = useState(true);
   title="Svetlo u dnevnoj sobi"
   status={lightOn ? "Uključeno" : "Isključeno"}
 >
-  <button onClick={() => setLightOn(!lightOn)}>
-    {lightOn ? "Isključi svetlo" : "Uključi svetlo"}
-  </button>
+  <Button onClick={() => setLightOn(!lightOn)}>
+  {lightOn ? "Isključi svetlo" : "Uključi svetlo"}
+</Button>
 </DeviceCard>
 
   <DeviceCard

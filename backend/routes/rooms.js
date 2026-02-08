@@ -1,5 +1,8 @@
+
 const express = require("express");
 const requireAuth = require("../middleware/requireAuth");
+const requireRole = require("../middleware/requireRole");
+
 
 const router = express.Router();
 
@@ -23,5 +26,22 @@ router.get("/:id", requireAuth, (req, res) => {
 
   res.json({ room });
 });
+
+router.post("/", requireAuth, requireRole("ADMIN"), (req, res) => {
+  const { name } = req.body;
+
+  if (!name) {
+    return res.status(400).json({ message: "Nedostaje naziv prostorije" });
+  }
+
+  res.json({
+    message: "Prostorija uspešno kreirana",
+    room: {
+      id: 1,
+      name
+    }
+  });
+});
+
 
 module.exports = router;

@@ -24,7 +24,7 @@ router.post("/register", (req, res) => {
 });
 
 router.post("/login", (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, role } = req.body;
 
   if (!email || !password) {
     return res.status(400).json({ message: "Nedostaju podaci" });
@@ -34,10 +34,11 @@ router.post("/login", (req, res) => {
     message: "Uspešna prijava",
     user: {
       email,
-      role: "PARENT"
+      role: role || "PARENT"
     },
     token: "fake-jwt-token"
   });
 });
+
 
 module.exports = router;

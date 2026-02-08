@@ -5,14 +5,7 @@ type ButtonProps = {
 
 export default function Button({ children, onClick }: ButtonProps) {
   return (
-    <button
-      onClick={onClick}
-      style={{
-        padding: "8px 12px",
-        marginRight: "8px",
-        cursor: "pointer",
-      }}
-    >
+    <button onClick={onClick}>
       {children}
     </button>
   );

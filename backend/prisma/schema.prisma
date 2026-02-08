@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+model Role {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  users User[]
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  password String
+
+  roleId Int
+  role   Role @relation(fields: [roleId], references: [id])
+
+  logs DeviceLog[]
+}
+
+model Room {
+  id      Int      @id @default(autoincrement())
+  name    String
+  devices Device[]
+}
+
+model Device {
+  id        Int      @id @default(autoincrement())
+  name      String
+  isActive  Boolean  @default(true)
+
+  serialNumber String?
+
+  roomId Int
+  room   Room @relation(fields: [roomId], references: [id])
+
+  logs DeviceLog[]
+  @@unique([roomId, name])
+}
+
+model DeviceLog {
+  id        Int      @id @default(autoincrement())
+  message   String
+  createdAt DateTime @default(now())
+
+  deviceId Int
+  device   Device @relation(fields: [deviceId], references: [id])
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+}
+

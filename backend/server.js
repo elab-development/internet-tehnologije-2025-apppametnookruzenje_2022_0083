@@ -1,5 +1,8 @@
 const express = require("express");
 const cors = require("cors");
+const usersRoutes = require("./routes/users");
+
+
 require("dotenv").config();
 
 
@@ -25,7 +28,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/me", meRoutes);
 app.use("/api/rooms", roomsRoutes);
 app.use("/api/devices", devicesRoutes);
-
+app.use("/api/users", usersRoutes);
 
 
 

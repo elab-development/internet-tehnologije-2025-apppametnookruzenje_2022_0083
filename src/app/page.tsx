@@ -30,7 +30,7 @@ export default function HomePage() {
           </Link>
         </div>
 
-        {/* Mini kartice – samo vizuelno */}
+        
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="rounded-xl bg-white/60 p-4 shadow">
             <h3 className="font-semibold mb-1">💡 Pametno svetlo</h3>

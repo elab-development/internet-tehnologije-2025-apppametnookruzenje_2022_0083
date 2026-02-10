@@ -1,3 +1,5 @@
+const jwt = require("jsonwebtoken");
+
 function requireAuth(req, res, next) {
   const authHeader = req.headers.authorization;
 
@@ -6,17 +8,17 @@ function requireAuth(req, res, next) {
   }
 
   const [type, token] = authHeader.split(" ");
-
   if (type !== "Bearer" || !token) {
     return res.status(401).json({ message: "Neispravan Authorization header" });
   }
 
-  if (token !== "fake-jwt-token") {
+  try {
+    req.user = jwt.verify(token, process.env.JWT_SECRET);
+    next();
+  } catch (e) {
     return res.status(401).json({ message: "Token nije validan" });
   }
-
-  req.user = { email: "test@test.com", role: "PARENT" };
-  next();
 }
 
 module.exports = requireAuth;
+

@@ -1,12 +1,12 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 const router = express.Router();
 
 
- 
 router.post("/register", async (req, res) => {
   try {
     const { email, password, roleName } = req.body;
@@ -14,7 +14,6 @@ router.post("/register", async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({ message: "Nedostaju podaci" });
     }
-
 
     const exists = await prisma.user.findUnique({ where: { email } });
     if (exists) {
@@ -34,15 +33,16 @@ router.post("/register", async (req, res) => {
     }
 
 
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const user = await prisma.user.create({
       data: {
         email,
-        password,
+        password: hashedPassword,
         roleId: role.id,
       },
       include: { role: true },
     });
-
 
     const token = jwt.sign(
       { userId: user.id, email: user.email, role: user.role.name },
@@ -70,21 +70,20 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "Nedostaju podaci" });
     }
 
-
     const user = await prisma.user.findUnique({
       where: { email },
       include: { role: true },
     });
 
+ 
     if (!user) {
       return res.status(401).json({ message: "Pogrešan email ili lozinka" });
     }
 
-
-    if (password !== user.password) {
+    const valid = await bcrypt.compare(password, user.password);
+    if (!valid) {
       return res.status(401).json({ message: "Pogrešan email ili lozinka" });
     }
-
 
     const token = jwt.sign(
       { userId: user.id, email: user.email, role: user.role.name },
@@ -109,3 +108,5 @@ router.post("/logout", (req, res) => {
 });
 
 module.exports = router;
+
+

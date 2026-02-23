@@ -1,5 +1,7 @@
+const cors = require('cors');
+
 const express = require("express");
-const cors = require("cors");
+
 const usersRoutes = require("./routes/users");
 
 
@@ -19,6 +21,7 @@ const devicesRoutes = require("./routes/devices");
 
 
 const app = express();
+app.use(cors());
 
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());

@@ -1,46 +1,70 @@
 
 const express = require("express");
 const requireAuth = require("../middleware/requireAuth");
-const requireRole = require("../middleware/requireRole");
+const { PrismaClient } = require("@prisma/client");
 
-
+const prisma = new PrismaClient();
 const router = express.Router();
 
-const rooms = [
-  { id: 1, name: "Dnevna soba" },
-  { id: 2, name: "Kuhinja" },
-  { id: 3, name: "Spavaća soba" }
-];
 
-router.get("/", requireAuth, (req, res) => {
+router.get("/", requireAuth, async (req, res) => {
+  const rooms = await prisma.room.findMany();
+  console.log("ROOMS FROM DB:", rooms);
   res.json({ rooms });
 });
 
-router.get("/:id", requireAuth, (req, res) => {
-  const id = Number(req.params.id);
-  const room = rooms.find(r => r.id === id);
 
-  if (!room) {
-    return res.status(404).json({ message: "Prostorija nije pronađena" });
+
+router.get("/room/:roomId", requireAuth, async (req, res) => {
+  try {
+    const roomId = Number(req.params.roomId);
+
+    if (Number.isNaN(roomId)) {
+      return res.status(400).json({ message: "Neispravan ID sobe" });
+    }
+
+    const devices = await prisma.device.findMany({
+      where: { roomId },
+      orderBy: { id: "asc" },
+    });
+
+    res.json({ devices });
+  } catch (err) {
+    console.error("GET devices by room error:", err);
+    res.status(500).json({ message: "Greška pri učitavanju uređaja" });
   }
-
-  res.json({ room });
 });
 
-router.post("/", requireAuth, requireRole("ADMIN"), (req, res) => {
-  const { name } = req.body;
 
-  if (!name) {
-    return res.status(400).json({ message: "Nedostaje naziv prostorije" });
-  }
 
-  res.json({
-    message: "Prostorija uspešno kreirana",
-    room: {
-      id: 1,
-      name
+router.put("/:id/toggle", requireAuth, async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+
+    if (Number.isNaN(id)) {
+      return res.status(400).json({ message: "Neispravan ID uređaja" });
     }
-  });
+
+    const device = await prisma.device.findUnique({
+      where: { id },
+    });
+
+    if (!device) {
+      return res.status(404).json({ message: "Uređaj nije pronađen" });
+    }
+
+    const updatedDevice = await prisma.device.update({
+      where: { id },
+      data: {
+        status: !device.status,
+      },
+    });
+
+    res.json({ device: updatedDevice });
+  } catch (err) {
+    console.error("Toggle device error:", err);
+    res.status(500).json({ message: "Greška pri promeni statusa uređaja" });
+  }
 });
 
 

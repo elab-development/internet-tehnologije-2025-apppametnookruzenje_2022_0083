@@ -16,10 +16,6 @@ const roomsRoutes = require("./routes/rooms");
 const devicesRoutes = require("./routes/devices");
 
 
-
-
-
-
 const app = express();
 app.use(cors());
 

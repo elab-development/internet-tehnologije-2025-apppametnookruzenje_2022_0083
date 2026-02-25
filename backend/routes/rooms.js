@@ -1,4 +1,4 @@
-
+const requireRole = require("../middleware/requireRole");
 const express = require("express");
 const requireAuth = require("../middleware/requireAuth");
 const { PrismaClient } = require("@prisma/client");
@@ -56,7 +56,7 @@ router.put("/:id/toggle", requireAuth, async (req, res) => {
     const updatedDevice = await prisma.device.update({
       where: { id },
       data: {
-        status: !device.status,
+        isActive: !device.isActive,
       },
     });
 
@@ -67,5 +67,79 @@ router.put("/:id/toggle", requireAuth, async (req, res) => {
   }
 });
 
+router.post("/", requireAuth, requireRole("ADMIN"), async (req, res) => {
+  try {
+    const { name } = req.body;
+
+    if (!name || !String(name).trim()) {
+      return res.status(400).json({ message: "Naziv sobe je obavezan" });
+    }
+
+    const created = await prisma.room.create({
+      data: { name: String(name).trim() },
+    });
+
+    return res.status(201).json({ message: "Soba dodata", room: created });
+  } catch (err) {
+    return res.status(500).json({ message: "Greška pri dodavanju sobe" });
+  }
+});
+
+router.patch("/:id", requireAuth, requireRole("ADMIN"), async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const { name } = req.body;
+
+    if (!Number.isFinite(id)) {
+      return res.status(400).json({ message: "Neispravan ID sobe" });
+    }
+    if (!name || !String(name).trim()) {
+      return res.status(400).json({ message: "Naziv sobe je obavezan" });
+    }
+
+    const room = await prisma.room.findUnique({ where: { id } });
+    if (!room) {
+      return res.status(404).json({ message: "Soba nije pronađena" });
+    }
+
+    const updated = await prisma.room.update({
+      where: { id },
+      data: { name: String(name).trim() },
+    });
+
+    return res.json({ message: "Soba izmenjena", room: updated });
+  } catch (err) {
+    return res.status(500).json({ message: "Greška pri izmeni sobe" });
+  }
+});
+
+router.delete("/:id", requireAuth, requireRole("ADMIN"), async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+
+    if (!Number.isFinite(id)) {
+      return res.status(400).json({ message: "Neispravan ID sobe" });
+    }
+
+    const room = await prisma.room.findUnique({
+      where: { id },
+      include: { devices: true },
+    });
+
+    if (!room) {
+      return res.status(404).json({ message: "Soba nije pronađena" });
+    }
+
+    if (room.devices.length > 0) {
+      return res.status(400).json({ message: "Ne možeš obrisati sobu koja ima uređaje" });
+    }
+
+    await prisma.room.delete({ where: { id } });
+
+    return res.json({ message: "Soba obrisana" });
+  } catch (err) {
+    return res.status(500).json({ message: "Greška pri brisanju sobe" });
+  }
+});
 
 module.exports = router;

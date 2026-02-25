@@ -4,20 +4,48 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
+const BACKEND_URL = "http://localhost:4000";
+
 export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [role, setRole] = useState<string | null>(null);
+
   const pathname = usePathname();
   const router = useRouter();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     setIsLoggedIn(!!token);
+
+    if (!token) {
+      setRole(null);
+      return;
+    }
+
+    fetch(`${BACKEND_URL}/api/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(async (res) => {
+        const data = await res.json().catch(() => null);
+        if (!res.ok) return null;
+        return data;
+      })
+      .then((data) => {
+        const r = String(data?.user?.role || "").toUpperCase();
+        setRole(r || null);
+      })
+      .catch(() => {
+        setRole(null);
+      });
   }, [pathname]);
 
   function handleLogout() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setIsLoggedIn(false);
+    setRole(null);
     router.push("/");
   }
 
@@ -28,7 +56,7 @@ export default function Navbar() {
         gap: 16,
         alignItems: "center",
         padding: "12px 20px",
-        background: "#1d1f7a",
+        background: "#171a6b",
         color: "white",
       }}
     >
@@ -53,6 +81,12 @@ export default function Navbar() {
           <Link href="/rooms" style={{ color: "white" }}>
             Rooms
           </Link>
+
+          {role === "ADMIN" && (
+            <Link href="/dashboard/admin/users" style={{ color: "white" }}>
+              Admin
+            </Link>
+          )}
 
           <button
             onClick={handleLogout}

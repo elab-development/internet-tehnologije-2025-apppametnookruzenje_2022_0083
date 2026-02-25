@@ -6,27 +6,46 @@ const { PrismaClient } = require("@prisma/client");
 const router = express.Router();
 const prisma = new PrismaClient();
 
+router.get("/", requireAuth, requireRole("ADMIN"), async (req, res) => {
+  try {
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        email: true,
+        role: { select: { name: true } },
+      },
+      orderBy: { id: "asc" },
+    });
 
-router.put("/:id/role", requireAuth, requireRole("ADMIN"), async (req, res) => {
+    return res.json(users);
+  } catch (e) {
+    return res.status(500).json({ message: "Greška na serveru" });
+  }
+});
+
+router.patch("/:id/role", requireAuth, requireRole("ADMIN"), async (req, res) => {
   try {
     const userId = Number(req.params.id);
-    const { role } = req.body;
+    const { roleName } = req.body;
 
     if (!Number.isFinite(userId)) {
       return res.status(400).json({ message: "Neispravan id korisnika" });
     }
-    if (!role) {
-      return res.status(400).json({ message: "Nedostaje role u body-ju" });
+    if (!roleName) {
+      return res.status(400).json({ message: "Nedostaje roleName u body-ju" });
     }
 
     const user = await prisma.user.findUnique({ where: { id: userId } });
-    if (!user) return res.status(404).json({ message: "Korisnik nije pronađen" });
+    if (!user) {
+      return res.status(404).json({ message: "Korisnik nije pronađen" });
+    }
 
-    const roleEntity = await prisma.role.findUnique({ where: { name: role } });
-    if (!roleEntity) return res.status(400).json({ message: "Nepostojeća uloga" });
+    const roleEntity = await prisma.role.findUnique({ where: { name: roleName } });
+    if (!roleEntity) {
+      return res.status(400).json({ message: "Nepostojeća uloga" });
+    }
 
- 
-    if (req.user.id === userId) {
+    if (req.user.userId === userId) {
       return res.status(400).json({ message: "Ne možete menjati svoju ulogu" });
     }
 

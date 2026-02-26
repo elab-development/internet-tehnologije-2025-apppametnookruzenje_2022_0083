@@ -42,6 +42,18 @@ router.put("/:id/toggle", requireAuth, async (req, res) => {
       data: { isActive: !device.isActive },
     });
 
+    const userId = req.user?.id || req.user?.userId;
+
+    if (userId) {
+      await prisma.deviceLog.create({
+        data: {
+          deviceId: updatedDevice.id,
+          userId,
+          message: `${updatedDevice.name} ${updatedDevice.isActive ? "upaljeno" : "ugašeno"}`,
+        },
+      });
+    }
+
     return res.json({ device: updatedDevice });
   } catch (err) {
     console.error("PUT /api/devices/:id/toggle error:", err);
@@ -66,6 +78,18 @@ router.put("/:id/temperature", requireAuth, requireRole("PARENT", "ADMIN"), asyn
       where: { id },
       data: { temperature },
     });
+
+    const userId = req.user?.id || req.user?.userId;
+
+    if (userId) {
+      await prisma.deviceLog.create({
+        data: {
+          deviceId: updated.id,
+          userId,
+          message: `${updated.name} temperatura postavljena na ${updated.temperature}°C`,
+        },
+      });
+    }
 
     return res.json({ device: updated });
   } catch (err) {
@@ -137,7 +161,10 @@ router.delete("/:id", requireAuth, requireRole("ADMIN"), async (req, res) => {
       return res.status(404).json({ message: "Uređaj nije pronađen" });
     }
 
-    await prisma.device.delete({ where: { id } });
+    await prisma.$transaction([
+      prisma.deviceLog.deleteMany({ where: { deviceId: id } }),
+      prisma.device.delete({ where: { id } }),
+    ]);
 
     return res.json({ message: "Uređaj obrisan" });
   } catch (err) {

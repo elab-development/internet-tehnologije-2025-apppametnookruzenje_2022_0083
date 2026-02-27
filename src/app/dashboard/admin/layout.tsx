@@ -14,8 +14,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 ];
 
   return (
-    <div className="min-h-screen flex bg-[#f7efe6]">
-      <main className="flex-1 p-8 pr-32">{children}</main>
+    <div className="min-h-screen flex">
+      <main className="flex-1 p-8 pr-32 max-w-none w-full mx-0">
+  {children}
+</main>
 
       <aside className="fixed right-8 top-1/2 -translate-y-1/2">
   <div className="w-16 rounded-3xl bg-[#171a6b] flex flex-col items-center gap-3 py-4">

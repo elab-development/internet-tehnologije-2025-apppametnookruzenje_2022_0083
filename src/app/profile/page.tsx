@@ -118,91 +118,110 @@ export default function ProfilePage() {
 }
 
   return (
-    <main style={{ maxWidth: 900, margin: "30px auto", padding: 16 }}>
-      <h1 style={{ fontSize: 26, fontWeight: 800, marginBottom: 14 }}>
-        Moj profil
-      </h1>
+  <main style={{ maxWidth: 1200, margin: "30px auto", padding: 16 }}>
+    <h1 style={{ fontSize: 26, fontWeight: 800, marginBottom: 14 }}>
+      Moj profil
+    </h1>
 
-      <section
-        style={{
-          border: "1px solid #e5e5e5",
-          borderRadius: 12,
-          padding: 14,
-          marginBottom: 16,
-        }}
-      >
-        <div style={{ display: "grid", gap: 6 }}>
-          <div>
-            <span style={{ opacity: 0.7 }}>Email: </span>
-            <b>{email || "-"}</b>
+    {/* GRID: levo (profil + sifra), desno (logovi) */}
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "1fr 1.2fr",
+        gap: 16,
+        alignItems: "start",
+      }}
+    >
+      {/* LEVA KOLONA */}
+      <div style={{ display: "grid", gap: 16 }}>
+        {/* Moj profil kartica */}
+        <section
+          style={{
+            border: "1px solid #e5e5e5",
+            borderRadius: 12,
+            padding: 14,
+            background: "rgba(255,255,255,0.75)",
+          }}
+        >
+          <div style={{ display: "grid", gap: 6 }}>
+            <div>
+              <span style={{ opacity: 0.7 }}>Email: </span>
+              <b>{email || "-"}</b>
+            </div>
+            <div>
+              <span style={{ opacity: 0.7 }}>Rola: </span>
+              <b>{role || "-"}</b>
+            </div>
           </div>
-          <div>
-            <span style={{ opacity: 0.7 }}>Rola: </span>
-            <b>{role || "-"}</b>
-          </div>
-        </div>
-      </section>
+        </section>
 
-      <section
-        style={{
-          border: "1px solid #e5e5e5",
-          borderRadius: 12,
-          padding: 14,
-          marginBottom: 16,
-        }}
-      >
-        <h2 style={{ fontSize: 18, fontWeight: 800, marginBottom: 10 }}>
-          Promena šifre
-        </h2>
+        {/* Promena šifre kartica */}
+        <section
+          style={{
+            border: "1px solid #e5e5e5",
+            borderRadius: 12,
+            padding: 14,
+            background: "rgba(255,255,255,0.75)",
+          }}
+        >
+          <h2 style={{ fontSize: 18, fontWeight: 800, marginBottom: 10 }}>
+            Promena šifre
+          </h2>
 
-        <form onSubmit={changePassword} style={{ display: "grid", gap: 10, maxWidth: 420 }}>
-          <input
-            type="password"
-            placeholder="Trenutna šifra"
-            value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
-            style={{ padding: 10, borderRadius: 10, border: "1px solid #ccc" }}
-          />
-          <input
-            type="password"
-            placeholder="Nova šifra"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            style={{ padding: 10, borderRadius: 10, border: "1px solid #ccc" }}
-          />
-          <input
-            type="password"
-            placeholder="Potvrdi novu šifru"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            style={{ padding: 10, borderRadius: 10, border: "1px solid #ccc" }}
-          />
-
-          <button
-            type="submit"
-            disabled={saving}
-            style={{
-              padding: 10,
-              borderRadius: 10,
-              border: "1px solid #171a6b",
-              background: "#171a6b",
-              color: "white",
-              cursor: "pointer",
-            }}
+          <form
+            onSubmit={changePassword}
+            style={{ display: "grid", gap: 10, maxWidth: 420 }}
           >
-            {saving ? "Menjam..." : "Promeni šifru"}
-          </button>
+            <input
+              type="password"
+              placeholder="Trenutna šifra"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              style={{ padding: 10, borderRadius: 10, border: "1px solid #ccc" }}
+            />
+            <input
+              type="password"
+              placeholder="Nova šifra"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              style={{ padding: 10, borderRadius: 10, border: "1px solid #ccc" }}
+            />
+            <input
+              type="password"
+              placeholder="Potvrdi novu šifru"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              style={{ padding: 10, borderRadius: 10, border: "1px solid #ccc" }}
+            />
 
-          {err && <div style={{ color: "crimson" }}>{err}</div>}
-          {msg && <div style={{ color: "green" }}>{msg}</div>}
-        </form>
-      </section>
+            <button
+              type="submit"
+              disabled={saving}
+              style={{
+                padding: 10,
+                borderRadius: 10,
+                border: "1px solid #171a6b",
+                background: "#171a6b",
+                color: "white",
+                cursor: "pointer",
+              }}
+            >
+              {saving ? "Menjam..." : "Promeni šifru"}
+            </button>
 
+            {err && <div style={{ color: "crimson" }}>{err}</div>}
+            {msg && <div style={{ color: "green" }}>{msg}</div>}
+          </form>
+        </section>
+      </div>
+
+      {/* DESNA KOLONA: LOGOVI */}
       <section
         style={{
           border: "1px solid #e5e5e5",
           borderRadius: 12,
           padding: 14,
+          background: "rgba(255,255,255,0.75)",
         }}
       >
         <h2 style={{ fontSize: 18, fontWeight: 800, marginBottom: 10 }}>
@@ -214,7 +233,16 @@ export default function ProfilePage() {
         ) : logs.length === 0 ? (
           <div>Nema logova.</div>
         ) : (
-          <div style={{ display: "grid", gap: 10 }}>
+          // samo OVAJ deo se skroluje, ne cela stranica
+          <div
+            style={{
+              display: "grid",
+              gap: 10,
+              maxHeight: "520px",
+              overflowY: "auto",
+              paddingRight: 6,
+            }}
+          >
             {logs.map((l) => (
               <div
                 key={l.id}
@@ -222,15 +250,19 @@ export default function ProfilePage() {
                   border: "1px solid #eee",
                   borderRadius: 10,
                   padding: 12,
+                  background: "rgba(255,255,255,0.7)",
                 }}
               >
                 <div style={{ fontWeight: 700 }}>{l.message}</div>
-                <div style={{ opacity: 0.7, fontSize: 13 }}>{formatDate(l.createdAt)}</div>
+                <div style={{ opacity: 0.7, fontSize: 13 }}>
+                  {formatDate(l.createdAt)}
+                </div>
               </div>
             ))}
           </div>
         )}
       </section>
-    </main>
-  );
+    </div>
+  </main>
+);
 }

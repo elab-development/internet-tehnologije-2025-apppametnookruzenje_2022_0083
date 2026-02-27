@@ -32,7 +32,10 @@ router.put("/:id/toggle", requireAuth, async (req, res) => {
       return res.status(400).json({ message: "Neispravan ID uređaja" });
     }
 
-    const device = await prisma.device.findUnique({ where: { id } });
+    const device = await prisma.device.findUnique({
+    where: { id },
+    include: { room: true },
+  });
     if (!device) {
       return res.status(404).json({ message: "Uređaj nije pronađen" });
     }
@@ -44,15 +47,16 @@ router.put("/:id/toggle", requireAuth, async (req, res) => {
 
     const userId = req.user?.id || req.user?.userId;
 
-    if (userId) {
-      await prisma.deviceLog.create({
-        data: {
-          deviceId: updatedDevice.id,
-          userId,
-          message: `${updatedDevice.name} ${updatedDevice.isActive ? "upaljeno" : "ugašeno"}`,
-        },
-      });
-    }
+if (userId) {
+  const roomName = device?.room?.name || "Nepoznata soba";
+  await prisma.deviceLog.create({
+    data: {
+      deviceId: updatedDevice.id,
+      userId,
+      message: `${roomName}: ${updatedDevice.name} ${updatedDevice.isActive ? "upaljeno" : "ugašeno"}`,
+    },
+  });
+}
 
     return res.json({ device: updatedDevice });
   } catch (err) {
@@ -74,22 +78,24 @@ router.put("/:id/temperature", requireAuth, requireRole("PARENT", "ADMIN"), asyn
       return res.status(400).json({ message: "Temperatura mora biti između 16 i 30" });
     }
 
-    const updated = await prisma.device.update({
-      where: { id },
-      data: { temperature },
-    });
+   const updated = await prisma.device.update({
+  where: { id },
+  data: { temperature },
+  include: { room: true },
+});
 
     const userId = req.user?.id || req.user?.userId;
 
-    if (userId) {
-      await prisma.deviceLog.create({
-        data: {
-          deviceId: updated.id,
-          userId,
-          message: `${updated.name} temperatura postavljena na ${updated.temperature}°C`,
-        },
-      });
-    }
+if (userId) {
+  const roomName = updated?.room?.name || "Nepoznata soba";
+  await prisma.deviceLog.create({
+    data: {
+      deviceId: updated.id,
+      userId,
+      message: `${roomName}: ${updated.name} temperatura postavljena na ${updated.temperature}°C`,
+    },
+  });
+}
 
     return res.json({ device: updated });
   } catch (err) {

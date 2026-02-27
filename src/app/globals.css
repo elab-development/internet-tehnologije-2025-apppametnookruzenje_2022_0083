@@ -21,11 +21,10 @@
 }
 
 body {
-  background: #fff2e6;
+  background: linear-gradient(to bottom right, #dbeafe, #eff6ff, #f1f5f9);
   color: #171717;
   font-family: Arial, Helvetica, sans-serif;
 }
-
 main {
   padding: 32px 20px;
   max-width: 900px;
@@ -38,8 +37,11 @@ nav {
   margin-bottom: 30px;
   background: #191970;
   border-bottom: 1px solid rgba(255,255,255,0.2);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  position: sticky;
+  top: 0;
+  z-index: 50;
 }
-
 nav a {
   margin-right: 16px;
   padding: 8px 12px;
@@ -90,6 +92,6 @@ label {
   padding: 16px;
   border-radius: 12px;
   margin-bottom: 16px;
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid #e5e7eb;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid #bfdbfe; /* light blue */
 }

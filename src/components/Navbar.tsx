@@ -20,6 +20,7 @@ export default function Navbar() {
 
     if (!token) {
       setRole(null);
+      setEmail(null);
       return;
     }
 
@@ -40,12 +41,14 @@ export default function Navbar() {
       })
       .catch(() => {
         setRole(null);
+        setEmail(null);
       });
   }, [pathname]);
 
   function handleLogout() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    window.dispatchEvent(new Event("auth-changed"));
     setIsLoggedIn(false);
     setRole(null);
     setEmail(null);
@@ -54,13 +57,17 @@ export default function Navbar() {
 
   return (
     <nav
+    className="relative z-50"
   style={{
-    display: "flex",
-    alignItems: "center",
-    padding: "12px 20px",
-    background: "#171a6b",
-    color: "white",
-  }}
+  display: "flex",
+  gap: 16,
+  alignItems: "center",
+  padding: "14px 28px",
+  background: "rgba(5, 15, 40, 0.85)",
+  backdropFilter: "blur(8px)",
+  borderBottom: "1px solid rgba(0, 200, 255, 0.2)",
+  color: "white",
+}}
 >
   <div style={{ flex: 1 }} />
 

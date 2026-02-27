@@ -2,16 +2,24 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
 
 export default function FloatingProfileButton() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const pathname = usePathname();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    setIsLoggedIn(!!token);
-  }, [pathname]);
+    const syncAuth = () => {
+      const token = localStorage.getItem("token");
+      setIsLoggedIn(!!token);
+    };
+
+    syncAuth();
+
+    window.addEventListener("auth-changed", syncAuth);
+
+    return () => {
+      window.removeEventListener("auth-changed", syncAuth);
+    };
+  }, []);
 
   if (!isLoggedIn) return null;
 
@@ -25,7 +33,7 @@ export default function FloatingProfileButton() {
         width: 52,
         height: 52,
         borderRadius: 26,
-        background: "#171a6b",
+        background: "#08e3fc",
         color: "white",
         display: "flex",
         alignItems: "center",

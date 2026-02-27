@@ -1,5 +1,5 @@
 "use client";
-
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -32,7 +32,7 @@ export default function LoginPage() {
       }
 
       localStorage.setItem("token", data.token);
-
+      window.dispatchEvent(new Event("auth-changed"));
 
       if (data.user) {
         localStorage.setItem("user", JSON.stringify(data.user));
@@ -49,61 +49,84 @@ export default function LoginPage() {
 
   return (
     <main className="flex justify-center pt-12 px-4">
-      <div className="w-full max-w-md rounded-2xl border border-white/40 bg-white/50 backdrop-blur-md shadow-lg p-7">
-        <h1 className="text-2xl font-bold mb-1">Login</h1>
-        <p className="text-sm text-gray-700 mb-5">
-          Prijavite se na nalog kako biste pristupili dashboard-u.
-        </p>
+      
 
-        {error && <p className="text-red-600 text-sm mb-3">{error}</p>}
+      <div className="fixed inset-0 w-full h-full overflow-hidden">
 
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleLogin();
-          }}
-          className="space-y-4"
-        >
-          <div>
-            <label className="block font-medium">Email</label>
-            <input
-              type="email"
-              placeholder="npr. ime@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mt-2 w-full rounded-xl border border-gray-300/70 bg-white/70 px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-200"
-            />
+        <Image
+          src="/pozadina2.jpg"
+          alt="Background"
+          fill
+          priority
+          className="object-cover"
+        />
+
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/30" />
+
+        <div className="relative z-10 flex items-center justify-center h-full px-4">
+
+          <div className="w-full max-w-md rounded-2xl p-7 shadow-2xl 
+          bg-white/10 backdrop-blur-lg border border-white/20 text-white">
+
+            <h1 className="text-2xl font-bold mb-1">Login</h1>
+
+            <p className="text-sm text-white/70 mb-5">
+              Prijavite se na nalog kako biste pristupili dashboard-u.
+            </p>
+
+            {error && <p className="text-red-400 text-sm mb-3">{error}</p>}
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleLogin();
+              }}
+              className="space-y-4"
+            >
+              <div>
+                <label className="block font-medium">Email</label>
+                <input
+                  type="email"
+                  placeholder="npr. ime@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="mt-2 w-full rounded-xl bg-white/20 border border-white/30 px-4 py-3 text-white placeholder-white/60 outline-none focus:ring-2 focus:ring-[#00c2ff]"
+                />
+              </div>
+
+              <div>
+                <label className="block font-medium">Lozinka</label>
+                <input
+                  type="password"
+                  placeholder="Unesite lozinku"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="mt-2 w-full rounded-xl bg-white/20 border border-white/30 px-4 py-3 text-white placeholder-white/60 outline-none focus:ring-2 focus:ring-[#00c2ff]"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full mt-2 rounded-xl bg-[#1095e8] text-white py-3 font-semibold hover:bg-[#0d7fc6] transition"
+              >
+                {loading ? "Prijava..." : "Prijavi se"}
+              </button>
+            </form>
+
+            <p className="text-sm mt-4 text-white/70">
+              Nemaš nalog?{" "}
+              <Link
+                href="/register"
+                className="font-semibold text-[#00c2ff] hover:underline"
+              >
+                Registruj se
+              </Link>
+            </p>
+
           </div>
 
-          <div>
-            <label className="block font-medium">Lozinka</label>
-            <input
-              type="password"
-              placeholder="Unesite lozinku"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="mt-2 w-full rounded-xl border border-gray-300/70 bg-white/70 px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-200"
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full mt-2 rounded-xl bg-indigo-900 text-white py-3 font-semibold hover:bg-indigo-800 transition disabled:opacity-60"
-          >
-            {loading ? "Prijava..." : "Prijavi se"}
-          </button>
-        </form>
-
-        <p className="text-sm mt-4">
-          Nemaš nalog?{" "}
-          <Link
-            href="/register"
-            className="font-semibold text-indigo-900 hover:underline"
-          >
-            Registruj se
-          </Link>
-        </p>
+        </div>
       </div>
     </main>
   );

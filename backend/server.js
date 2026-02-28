@@ -19,6 +19,7 @@ const swaggerSpec = require("./swagger");
 
 
 const app = express();
+const isTest = process.env.NODE_ENV === "test";
 app.use(cors());
 
 app.use(cors({ origin: true, credentials: true }));
@@ -40,6 +41,12 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
-  console.log(`API radi na http://localhost:${PORT}`);
-});
+
+if (!isTest) {
+  app.listen(PORT, () => {
+    console.log(`API radi na http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
+

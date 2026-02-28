@@ -6,6 +6,16 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const router = express.Router();
 
+/**
+ * @swagger
+ * /api/rooms:
+ *   get:
+ *     summary: Lista soba
+ *     tags: [Rooms]
+ *     responses:
+ *       200:
+ *         description: Vraća listu soba
+ */
 
 router.get("/", requireAuth, async (req, res) => {
   const rooms = await prisma.room.findMany();

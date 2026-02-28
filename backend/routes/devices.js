@@ -25,6 +25,25 @@ router.get("/room/:roomId", requireAuth, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/devices/{id}/toggle:
+ *   put:
+ *     summary: Uključi/isključi uređaj
+ *     tags: [Devices]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Vraća ažuriran uređaj
+ *       404:
+ *         description: Uređaj nije pronađen
+ */
+
 router.put("/:id/toggle", requireAuth, async (req, res) => {
   try {
     const id = Number(req.params.id);

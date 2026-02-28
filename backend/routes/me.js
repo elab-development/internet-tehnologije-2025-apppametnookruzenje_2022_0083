@@ -6,6 +6,20 @@ const requireAuth = require("../middleware/requireAuth");
 const prisma = new PrismaClient();
 const router = express.Router();
 
+/**
+ * @swagger
+ * /api/me:
+ *   get:
+ *     summary: Podaci o trenutno ulogovanom korisniku
+ *     tags: [Me]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Vraća podatke o korisniku
+ *       401:
+ *         description: Neautorizovan pristup
+ */
 router.get("/", requireAuth, (req, res) => {
   res.json({ message: "Ulogovan korisnik", user: req.user });
 });
@@ -30,6 +44,23 @@ router.get("/logs", requireAuth, async (req, res) => {
     return res.status(500).json({ message: "Greška pri učitavanju logova." });
   }
 });
+
+/**
+ * @swagger
+ * /api/me/password:
+ *   put:
+ *     summary: Promena lozinke korisnika
+ *     tags: [Me]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lozinka uspešno promenjena
+ *       400:
+ *         description: Neispravni podaci
+ *       401:
+ *         description: Neautorizovan pristup
+ */
 
 router.put("/password", requireAuth, async (req, res) => {
   try {

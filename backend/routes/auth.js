@@ -6,6 +6,37 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const router = express.Router();
 
+/**
+ * @swagger
+ * /api/auth/register:
+ *   post:
+ *     summary: Registracija korisnika
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: nova@gmail.com
+ *               password:
+ *                 type: string
+ *                 example: test123
+ *               roleName:
+ *                 type: string
+ *                 example: PARENT
+ *     responses:
+ *       201:
+ *         description: Uspešna registracija
+ *       409:
+ *         description: Korisnik već postoji
+ */
 
 router.post("/register", async (req, res) => {
   try {
@@ -61,6 +92,34 @@ router.post("/register", async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     summary: Login korisnika
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: sara@gmail.com
+ *               password:
+ *                 type: string
+ *                 example: sara
+ *     responses:
+ *       200:
+ *         description: Uspešan login
+ *       401:
+ *         description: Pogrešan email ili lozinka
+ */
 
 router.post("/login", async (req, res) => {
   try {

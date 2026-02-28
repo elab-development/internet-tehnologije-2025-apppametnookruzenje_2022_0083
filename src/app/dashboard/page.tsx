@@ -66,14 +66,20 @@ export default function DashboardPage() {
 
   const weather = data?.weather?.current ?? null;
   const air = data?.air?.current ?? null;
+  const airLevelMap: Record<string, string> = {
+  GOOD: "Dobro",
+  MODERATE: "Umereno",
+  POOR: "Loše",
+  VERY_POOR: "Veoma loše",
+};
 
   return (
     <main>
-      {/*<h1>Dashboard</h1>
-      <p>Pregled pametnog okruženja</p>*/}
+      <h1>Dashboard</h1>
+      {/*<p>Pregled pametnog okruženja</p>*/}
 
       
-      <DeviceCard title="Pretraga lokacije" status="Unesi grad za prikaz podataka">
+      <DeviceCard title="Pretraga lokacije" status="Unesi grad za prikaz podataka" titleClassName="font-bold text-indigo-700">
         <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
           <input
             value={city}
@@ -104,7 +110,7 @@ export default function DashboardPage() {
       
       <DeviceCard
         title="Vremenska prognoza (trenutno)"
-        status={weather?.temperature_2m != null ? `${weather.temperature_2m}°C` : "—"}
+        status={weather?.temperature_2m != null ? `${weather.temperature_2m}°C` : "—" } titleClassName="font-bold text-indigo-700"
       >
         <p>Temperatura: {weather?.temperature_2m ?? "—"} °C</p>
         <p>Vlažnost: {weather?.relative_humidity_2m ?? "—"} %</p>
@@ -114,7 +120,8 @@ export default function DashboardPage() {
       
       <DeviceCard
         title="Kvalitet vazduha (trenutno)"
-        status={data?.recommendations?.airSummary?.level ?? "—"}
+        status={
+            airLevelMap[data?.recommendations?.airSummary?.level ?? ""] ?? "—"}  titleClassName="font-bold text-indigo-700"
       >
         <p>PM2.5: {air?.pm2_5 ?? "—"} µg/m³</p>
         <p>PM10: {air?.pm10 ?? "—"} µg/m³</p>
@@ -129,9 +136,11 @@ export default function DashboardPage() {
       </DeviceCard>
 
       
-      <DeviceCard title="Smart preporuke" status="Automatski predlog na osnovu spoljašnjih uslova">
+      <DeviceCard title="Smart preporuke" status="Automatski predlog na osnovu spoljašnjih uslova" titleClassName="font-bold text-indigo-700">
         <p>
-          <b>Preporučena temperatura klime:</b>{" "}
+          <span className="font-bold text-indigo-700">
+            Preporučena temperatura klime:
+          </span>{" "}
           {data?.recommendations?.acRecommendation?.suggestedSetpointC ?? "—"}°C
         </p>
         {data?.recommendations?.acRecommendation?.reason && (
@@ -139,12 +148,16 @@ export default function DashboardPage() {
         )}
 
         <p style={{ marginTop: 10 }}>
-          <b>Provetravanje:</b>{" "}
+          <span className="font-bold text-indigo-700">
+            Provetravanje:
+          </span>{" "}
           {data?.recommendations?.ventilationRecommendation ?? "—"}
         </p>
 
         <p style={{ marginTop: 10 }}>
-          <b>Izlazak napolje:</b>{" "}
+          <span className="font-bold text-indigo-700">
+            Izlazak napolje:
+          </span>{" "}
           {data?.recommendations?.outsideRecommendation ?? "—"}
         </p>
       </DeviceCard>

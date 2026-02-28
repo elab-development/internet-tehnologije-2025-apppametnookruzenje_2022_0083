@@ -71,7 +71,7 @@ export default function LoginPage() {
             <h1 className="text-2xl font-bold mb-1">Login</h1>
 
             <p className="text-sm text-white/70 mb-5">
-              Prijavite se na nalog kako biste pristupili dashboard-u.
+              Prijavite se na nalog kako biste pristupili funkcionalnostima.
             </p>
 
             {error && <p className="text-red-400 text-sm mb-3">{error}</p>}
@@ -118,7 +118,7 @@ export default function LoginPage() {
               Nemaš nalog?{" "}
               <Link
                 href="/register"
-                className="font-semibold text-[#00c2ff] hover:underline"
+                className="font-semibold text-[#6dfafa] hover:underline"
               >
                 Registruj se
               </Link>

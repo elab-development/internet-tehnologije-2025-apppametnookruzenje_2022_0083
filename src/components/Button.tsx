@@ -17,9 +17,9 @@ export default function Button({
     "px-6 py-3 rounded-xl font-semibold transition duration-300";
 
   const styles =
-    variant === "primary"
-      ? "bg-cyan-500 text-black hover:bg-cyan-400 shadow-lg shadow-cyan-500/30"
-      : "border border-cyan-400 text-cyan-400 hover:bg-cyan-400/10";
+  variant === "primary"
+    ? "bg-cyan-500 text-black hover:bg-cyan-400"
+    : "border border-cyan-400 text-cyan-400 hover:bg-cyan-400/10";
 
   const disabledStyles = disabled
     ? "opacity-50 cursor-not-allowed"

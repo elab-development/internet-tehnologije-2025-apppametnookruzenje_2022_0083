@@ -6,6 +6,7 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const router = express.Router();
 
+
 router.get("/room/:roomId", requireAuth, async (req, res) => {
   try {
     const roomId = Number(req.params.roomId);

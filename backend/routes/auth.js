@@ -1,3 +1,4 @@
+const rateLimit = require("express-rate-limit");
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -5,6 +6,13 @@ const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 const router = express.Router();
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, 
+  max: 3, 
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: "Previše pokušaja prijave. Pokušajte kasnije." },
+});
 
 /**
  * @swagger
@@ -121,7 +129,7 @@ router.post("/register", async (req, res) => {
  *         description: Pogrešan email ili lozinka
  */
 
-router.post("/login", async (req, res) => {
+router.post("/login", loginLimiter, async (req, res) => {
   try {
     const { email, password } = req.body;
 
